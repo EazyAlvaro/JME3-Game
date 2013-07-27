@@ -1,0 +1,15 @@
+K 10
+svn:ignore
+V 122
+._.DS_Store
+._.svn
+._chatcontrol
+._common
+._dragndrop
+._dropdown
+._listbox
+._scrollpanel
+._sliderandscrollbar
+._textfield
+
+END
