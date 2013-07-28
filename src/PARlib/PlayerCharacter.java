@@ -1,19 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package PARlib;
 
 import java.util.ArrayList;
 import PARlib.Items.Item;
 
 /**
- *
- * @author temp
+ * This class is intended to handle all inventory management unique to the player
+ * @author 
  */
 public class PlayerCharacter  {
-    private WorldObjectManager WOManager;// = new ArrayList();
-    private InventoryManager invManager;// = new InventoryManager();
+    private WorldObjectManager WOManager;
+    private InventoryManager invManager;
     
     public PlayerCharacter(WorldObjectManager wom, InventoryManager inv) {
         this.WOManager = wom;
