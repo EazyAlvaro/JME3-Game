@@ -107,7 +107,7 @@ public class GameClient extends SimpleApplication
     private float rockScale = 128;
     private boolean usePhysics = true;
     
-    public LightManager lightManager;
+    //public LightManager lightManager;
     private GameClient app = null;
 
     // </editor-fold>
@@ -126,7 +126,7 @@ public class GameClient extends SimpleApplication
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-        this.lightManager = new LightManager(this);
+
         WOM = new WorldObjectManager(WorldObjects, rootNode);
         INV = new InventoryManager(Inventory);
         ObjectHelper objHelper = new ObjectHelper(bulletAppState, assetManager, WOM, rootNode);
@@ -144,15 +144,13 @@ public class GameClient extends SimpleApplication
             initSimpleMapMaterials();
             initSingleMap();
             initSingleLOD();
-            lightManager.initShadow();
         } else { //for actual in-game testing
             initGridMaterials();
             initGridMap();
-            lightManager.initGridShadow();
         }
-
-        lightManager.initLighting();
-        lightManager.initBloom(2f);
+        
+        initLightning();
+        
         initPlayer();
         initCrossHairs();
        // initMark();
@@ -683,5 +681,12 @@ public class GameClient extends SimpleApplication
         pickText.setText("Location" + this.player.getPhysicsLocation().toString());
         pickText.setLocalTranslation(300, pickText.getLineHeight(), 0);
         guiNode.attachChild(pickText); // write on the clean slate
+    }
+
+    private void initLightning() {
+        LightManager lightManager = new LightManager(this);
+        lightManager.initGridShadow();
+        lightManager.initLighting();
+        lightManager.initBloom(2f);
     }
 }

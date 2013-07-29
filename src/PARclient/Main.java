@@ -6,6 +6,9 @@ public class Main extends GameClient {
 
     public static void main(String[] args) {
         Main app = new Main();
+        
+        
+        
         AppSettings settings = new AppSettings(true);
         settings.setResolution(1280,720);
         settings.setFrameRate(90);
