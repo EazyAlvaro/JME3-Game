@@ -56,18 +56,20 @@ public class GameClient extends SimpleApplication
     public Node pickNode = new Node("pickNode");
     private boolean showWireframe = false;   
     private MapManager mapMan;
-    //public LightManager lightManager;
+    private LightManager lightManager;
     private GameClient app = null;
 
     
     // </editor-fold>
     public static void main(String[] args) {
         
-        GameClient app = new GameClient();;
+        GameClient app = new GameClient();
         // terrain here?
-        LightManager lightManager = new LightManager(app);
+        
         MapManager mapManager = new MapManager();
+        LightManager lightManager = new LightManager(app);
         app.setMapManager(mapManager);
+        app.setLightManager(lightManager);
         //lightManager.initLightning(mapManager);
         app.setShowSettings(true);
         app.start();
@@ -79,6 +81,12 @@ public class GameClient extends SimpleApplication
         mapMan = mapManager;
     }
     
+    /**
+     * @fixme doesn't seem to carry to simpleInitApp
+     */
+    public void setLightManager(LightManager lightManag) {
+        lightManager = lightManag;
+    }
     
     /**
      * Initiates the app. is called by app.start()
@@ -88,7 +96,6 @@ public class GameClient extends SimpleApplication
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-
 
         WOM = new WorldObjectManager(WorldObjects, rootNode);
         INV = new InventoryManager(Inventory);
@@ -115,8 +122,7 @@ public class GameClient extends SimpleApplication
         
         initPlayer();
         initCrossHairs();
-       // initMark();
-        initKeys();
+        initInputManager();
         // </editor-fold>
 
         //TODO abstract all this away to a separate function
@@ -165,12 +171,11 @@ public class GameClient extends SimpleApplication
     }
 
     /**
-     * actually handles the mouseclicks, and where they clicked in the world
-     * @todo in need of obvios refactor/renaming
+     * handles the mouseclicks, and where they clicked in the world
      * @param name "left_click" or "right_ click" event names
      * @param keyPressed whther or not said button/event was triggered
      */
-    private void raycastMark(String name, boolean keyPressed) {
+    private void handleMouseClick(String name, boolean keyPressed) {
         String hit; // = "Nothing";
         Vector3f pt = null;
         float dist = 0;
@@ -218,9 +223,9 @@ public class GameClient extends SimpleApplication
     }
 
     /**
-     * Maps keytriggers to inputListeners to move the player and take other input.
+     * Maps keytriggers to inputListeners to move the player and take other input (mouse, mainly)
      */
-    public void initKeys() {
+    public void initInputManager() {
         // Mappings
         inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_D));
@@ -345,9 +350,9 @@ public class GameClient extends SimpleApplication
             } else if (binding.equals("Jumps")) {
                 player.jump();
             } else if (binding.equals("left_click")) {
-                raycastMark(binding, value);
+                handleMouseClick(binding, value);
             } else if (binding.equals("right_click")) {
-                raycastMark(binding, value);
+                handleMouseClick(binding, value);
             } else if (binding.equals("wireframe") && !value) {
                 showWireframe = !showWireframe;
                 mapMan.showFrames(showWireframe, player);
