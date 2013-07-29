@@ -1,8 +1,8 @@
 package PARclient;
 
  //Physics and collission
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
-import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
+//import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+//import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -17,18 +17,15 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 
-//Terrain, assets, lighting and textures
+//Terrain, assets,  and textures
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
-import com.jme3.light.*;
+
 import com.jme3.material.Material;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.CameraControl.ControlDirection.*;
-import com.jme3.shadow.PssmShadowRenderer;
-import com.jme3.shadow.PssmShadowRenderer.CompareMode;
-import com.jme3.shadow.PssmShadowRenderer.FilterMode;
 import com.jme3.terrain.geomipmap.TerrainGrid;
 import com.jme3.terrain.geomipmap.TerrainGridListener;
 import com.jme3.terrain.geomipmap.TerrainGridLodControl;
@@ -50,9 +47,6 @@ import javax.management.JMException;
 import PARlib.*;
 import PARlib.Items.Item;
 import com.jme3.input.FlyByCamera;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.CameraNode;
 import com.jme3.bullet.control.CharacterControl;
@@ -74,15 +68,13 @@ public class GameClient extends SimpleApplication
         implements ActionListener {
 
     // <editor-fold defaultstate="collapsed" desc="Local Properties">
-    //Lighting
-    private PssmShadowRenderer pssmRenderer;
     // terrain
     private Material terrain_single_material; // textures/material for single maps
     private Material terrain_grid_material; // texture/material for quad/testing maps
     private Material terrain_wire;
     private boolean wireframe = false;
-    private TerrainGrid terrain_grid;
-    private TerrainQuad terrain_single;
+    public TerrainGrid terrain_grid;
+    public TerrainQuad terrain_single;
     //Physics
     private BulletAppState bulletAppState;
     private Vector3f walkDirection = new Vector3f();
@@ -114,10 +106,12 @@ public class GameClient extends SimpleApplication
     private float dirtScale = 32;
     private float rockScale = 128;
     private boolean usePhysics = true;
+    
+    public LightManager lightManager;
+    private GameClient app = null;
 
     // </editor-fold>
     public static void main(String[] args) {
-
         GameClient app = new GameClient();
         app.setShowSettings(true);
         app.start();
@@ -132,30 +126,33 @@ public class GameClient extends SimpleApplication
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 
-        //fractal verion does not have these
+        this.lightManager = new LightManager(this);
         WOM = new WorldObjectManager(WorldObjects, rootNode);
         INV = new InventoryManager(Inventory);
         ObjectHelper objHelper = new ObjectHelper(bulletAppState, assetManager, WOM, rootNode);
 
+        
         rootNode.attachChild(SkyFactory.createSky(
                 assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
         // <editor-fold defaultstate="collapsed" desc="Initialisations">
         boolean gridTest = true;
 
+        
+        
         if (gridTest == false) { // for testing simple things without the complexity of grid-tiles around
             initSimpleMapMaterials();
             initSingleMap();
             initSingleLOD();
-            initShadow();
+            lightManager.initShadow();
         } else { //for actual in-game testing
             initGridMaterials();
             initGridMap();
-            initGridShadow();
+            lightManager.initGridShadow();
         }
 
-        initLighting();
-        initBloom();
+        lightManager.initLighting();
+        lightManager.initBloom();
         initPlayer();
         initCrossHairs();
        // initMark();
@@ -176,74 +173,7 @@ public class GameClient extends SimpleApplication
         rootNode.attachChild(tp3);
     }
 
-    /**
-     * Define and initiate the lighting in the world
-     */
-    private void initLighting() {
-        AmbientLight amb = new AmbientLight();
-        amb.setColor(ColorRGBA.White.mult(2.5f));
-        rootNode.addLight(amb);
-
-        /*
-         DirectionalLight light1 = new DirectionalLight();
-         light1.setDirection((new Vector3f(-1, -1, -1)).normalize());
-         light1.setColor(ColorRGBA.Yellow.mult(0.2f));
-         rootNode.addLight(light1);
-         */
-
-        DirectionalLight light2 = new DirectionalLight();
-        light2.setDirection((new Vector3f(-1, -0.7f, -1)));
-        light2.setColor(ColorRGBA.White.mult(0.7f));
-        rootNode.addLight(light2);
-
-    }
-
-    /**
-     * initiates shadows for single quad-based maps
-     */
-    private void initShadow() {
-        rootNode.setShadowMode(ShadowMode.Off);
-        terrain_single.setShadowMode(ShadowMode.CastAndReceive);
-        initBaseShadow();
-    }
-
-    /**
-     * Initializes shadows for grid-based maps
-     */
-    private void initGridShadow() {
-        rootNode.setShadowMode(ShadowMode.Off);
-        terrain_grid.setShadowMode(ShadowMode.CastAndReceive);
-        initBaseShadow();
-    }
-
-    /**
-     * Initiates shadow processing. Still uses the outdated PSSM render
-     *
-     * @todo replace with OccularOcclusion
-     */
-    private void initBaseShadow() {
-        pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 16);
-        pssmRenderer.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
-        pssmRenderer.setLambda(0.2f);
-        pssmRenderer.setShadowIntensity(0.5f);
-        pssmRenderer.setCompareMode(CompareMode.Hardware);
-        pssmRenderer.setEdgesThickness(3);
-        pssmRenderer.setFilterMode(FilterMode.PCFPOISSON);
-        //pssmRenderer.displayDebug();
-        viewPort.addProcessor(pssmRenderer);
-    }
-
-    /**
-     * Initiate the Bloom-lighting render, giving lighted things a 'glow' 
-     */ 
-    private void initBloom() {
-        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-        BloomFilter bloom = new BloomFilter();
-        bloom.setBlurScale(4f); // intensity of the bloom
-        fpp.addFilter(bloom);
-        viewPort.addProcessor(fpp);
-    }
-
+   
     /**
      * Initiates a single quad heightmap based on own custom heightmap generator
      * @uses InterpolatedheightMap
