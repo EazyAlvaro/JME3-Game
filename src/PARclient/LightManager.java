@@ -10,12 +10,11 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.shadow.PssmShadowRenderer;
 
 /**
- *
+ * This class manages and abstracts away : Lighting, Bloom, Shadow
  * @author Alvaro
  */
 public class LightManager {
     private GameClient app = null;
-    private PssmShadowRenderer pssmRenderer;
     
     public LightManager(GameClient client) {
         this.app = client;
@@ -24,16 +23,14 @@ public class LightManager {
      /**
      * Initiate the Bloom-lighting render, giving lighted things a 'glow' 
      */ 
-    public void initBloom() {
+    public void initBloom(float scale) {
         FilterPostProcessor fpp = new FilterPostProcessor(app.getAssetManager());
         BloomFilter bloom = new BloomFilter();
-        bloom.setBlurScale(4f); // intensity of the bloom
+        bloom.setBlurScale(scale); // intensity of the bloom
         fpp.addFilter(bloom);
         app.getViewPort().addProcessor(fpp);
     }
-
-    
-    
+ 
      /**
      * initiates shadows for single quad-based maps
      */
@@ -57,7 +54,7 @@ public class LightManager {
      */
     public void initLighting() {
         AmbientLight amb = new AmbientLight();
-        amb.setColor(ColorRGBA.White.mult(1.0f));
+        amb.setColor(ColorRGBA.White.mult(0.75f));
         app.getRootNode().addLight(amb);
 
         /*
@@ -68,12 +65,11 @@ public class LightManager {
          */
 
         DirectionalLight light2 = new DirectionalLight();
-        light2.setDirection((new Vector3f(-1, -0.7f, -1)));
-        light2.setColor(ColorRGBA.White.mult(1.7f));
+        light2.setDirection((new Vector3f(-1, -0.6f, -1)));
+        light2.setColor(ColorRGBA.White.mult(1.25f));
         app.getRootNode().addLight(light2);
 
-    }
-    
+    }   
     
     /**
      * Initiates shadow processing. Still uses the outdated PSSM render
@@ -81,12 +77,12 @@ public class LightManager {
      * @todo replace with OccularOcclusion
      */
     public void initBaseShadow() {
-        pssmRenderer = new PssmShadowRenderer(app.getAssetManager(), 1024, 16);
+        PssmShadowRenderer pssmRenderer = new PssmShadowRenderer(app.getAssetManager(), 1024, 16);
         pssmRenderer.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
         pssmRenderer.setLambda(0.2f);
         pssmRenderer.setShadowIntensity(0.5f);
         pssmRenderer.setCompareMode(PssmShadowRenderer.CompareMode.Hardware);
-        pssmRenderer.setEdgesThickness(3);
+        pssmRenderer.setEdgesThickness(5);
         pssmRenderer.setFilterMode(PssmShadowRenderer.FilterMode.PCFPOISSON);
         //pssmRenderer.displayDebug();
         app.getViewPort().addProcessor(pssmRenderer);
