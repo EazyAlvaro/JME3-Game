@@ -152,7 +152,7 @@ public class GameClient extends SimpleApplication
         }
 
         lightManager.initLighting();
-        lightManager.initBloom();
+        lightManager.initBloom(2f);
         initPlayer();
         initCrossHairs();
        // initMark();
@@ -338,7 +338,7 @@ public class GameClient extends SimpleApplication
 
     /**
      * actually handles the mouseclicks, and where they clicked in the world
-     *
+     * @todo in need of obvios refactor/renaming
      * @param name "left_click" or "right_ click" event names
      * @param keyPressed whther or not said button/event was triggered
      */
@@ -419,6 +419,12 @@ public class GameClient extends SimpleApplication
         inputManager.addListener(this, "Jumps");
     }
    
+    /**
+     * Overrides the abstract class
+     * @param binding The KeyBinding that was(or was not) triggered
+     * @param value whether or not said key was pressed
+     * @param tpf dont know/care
+     */
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Lefts")) {
             left = value;
