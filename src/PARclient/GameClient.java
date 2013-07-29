@@ -27,10 +27,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.terrain.noise.filter.IterativeFilter;
-import com.jme3.terrain.noise.filter.OptimizedErode;
-import com.jme3.terrain.noise.filter.PerturbFilter;
-import com.jme3.terrain.noise.filter.SmoothFilter;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,18 +54,8 @@ public class GameClient extends SimpleApplication
     private InventoryManager INV = new InventoryManager(Inventory);
     private PlayerCharacter playerCharacter = new PlayerCharacter(WOM, INV);
     public Node pickNode = new Node("pickNode");
-    //custom map stuff
-
-    private PerturbFilter perturb;
-    private OptimizedErode therm;
-    private SmoothFilter smooth;
-    private IterativeFilter iterate;
-    
-    
-    private boolean showWireframe = false;
-    
+    private boolean showWireframe = false;   
     private MapManager mapMan;
-    
     //public LightManager lightManager;
     private GameClient app = null;
 
