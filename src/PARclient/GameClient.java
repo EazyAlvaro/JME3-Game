@@ -3,53 +3,37 @@ package PARclient;
  //Physics and collission
 //import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 //import com.jme3.bullet.collision.shapes.HeightfieldCollisionShape;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.BulletAppState;
-
-//For item Picking and ray-casting
-import com.jme3.collision.CollisionResult;
-import com.jme3.collision.CollisionResults;
-import com.jme3.math.Ray;
-
-//Terrain, assets,  and textures
-import com.jme3.terrain.geomipmap.TerrainLodControl;
-
-import com.jme3.material.Material;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.control.CameraControl.ControlDirection.*;
-import com.jme3.terrain.geomipmap.lodcalc.DistanceLodCalculator;
-import com.jme3.terrain.noise.filter.IterativeFilter;
-import com.jme3.terrain.noise.filter.OptimizedErode;
-import com.jme3.terrain.noise.filter.PerturbFilter;
-import com.jme3.terrain.noise.filter.SmoothFilter;
-import com.jme3.terrain.noise.fractal.FractalSum;
-import com.jme3.util.SkyFactory;
-import java.util.Iterator;
-
-//Misc & Controls
 import PARlib.*;
 import PARlib.Items.Item;
-import com.jme3.input.FlyByCamera;
-import com.jme3.scene.Node;
-import com.jme3.scene.CameraNode;
+import PARlib.Items.ObjectHelper;
+import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.font.BitmapText;
-import PARlib.Items.ObjectHelper;
-import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
-import com.jme3.renderer.Camera;
-import java.util.ArrayList;
-import java.util.List;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.CameraNode;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Sphere;
+import com.jme3.terrain.noise.filter.IterativeFilter;
+import com.jme3.terrain.noise.filter.OptimizedErode;
+import com.jme3.terrain.noise.filter.PerturbFilter;
+import com.jme3.terrain.noise.filter.SmoothFilter;
+import com.jme3.util.SkyFactory;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class GameClient extends SimpleApplication

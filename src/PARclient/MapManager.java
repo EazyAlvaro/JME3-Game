@@ -5,7 +5,6 @@
 package PARclient;
 
 import PARlib.InterpolatedHeightMap;
-import PARlib.PlayerCharacter;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
