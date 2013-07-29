@@ -25,7 +25,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
@@ -65,15 +64,8 @@ public class GameClient extends SimpleApplication
     public static void main(String[] args) {
         
         GameClient app = new GameClient();
-        // terrain here?
-        
-        MapManager mapManager = new MapManager();
-        LightManager lightManager = new LightManager(app);
-        app.setMapManager(mapManager);
-        app.setLightManager(lightManager);
-        //lightManager.initLightning(mapManager);
+        // terrain here? // more likely in the real Main
         app.setShowSettings(true);
-        app.start();
     }
     
 
@@ -110,8 +102,7 @@ public class GameClient extends SimpleApplication
             mapMan.initGridMaterials(assetManager);
             mapMan.initGridMap(rootNode, bulletAppState, getCamera());
         }
-        
-        LightManager lightManager = new LightManager(this);
+            
         lightManager.init(mapMan);      
         initPlayer();
         initCrossHairs();

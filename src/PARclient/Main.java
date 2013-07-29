@@ -16,13 +16,12 @@ public class Main extends GameClient {
         //settings.setTitle("Post-Apoc:ren   - the Post Apocalyptic Rennaissance!");
 	
         app.setSettings(settings);
-	app.setPauseOnLostFocus(true);
-        
+	app.setPauseOnLostFocus(true);        
         
         LightManager lightManager = new LightManager(app);
         MapManager mapManager = new MapManager();
         app.setMapManager(mapManager);
-        
+        app.setLightManager(lightManager);
         
         app.start();
     }
