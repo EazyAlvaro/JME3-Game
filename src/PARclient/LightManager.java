@@ -8,6 +8,7 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.shadow.PssmShadowRenderer;
+import com.jme3.terrain.geomipmap.TerrainQuad;
 
 /**
  * This class manages and abstracts away : Lighting, Bloom, Shadow
@@ -19,6 +20,14 @@ public class LightManager {
     public LightManager(GameClient client) {
         this.app = client;
     }
+    
+    
+    public void initLightning(MapManager mapManager) {
+        initGridShadow(mapManager);
+        initLighting();
+        initBloom(2f);
+    }
+        
     
      /**
      * Initiate the Bloom-lighting render, giving lighted things a 'glow' 
@@ -34,18 +43,20 @@ public class LightManager {
      /**
      * initiates shadows for single quad-based maps
      */
-    public void initShadow() {
+    public void initShadow(MapManager mapMan) {
         app.getRootNode().setShadowMode(RenderQueue.ShadowMode.Off);
-        app.terrain_single.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        TerrainQuad terrain = mapMan.getTerrainQuad();
+        terrain.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         initBaseShadow();
     }
 
     /**
      * Initializes shadows for grid-based maps
      */
-    public void initGridShadow() {
+    public void initGridShadow(MapManager mapMan) {
         app.getRootNode().setShadowMode(RenderQueue.ShadowMode.Off);
-        app.terrain_grid.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        TerrainQuad terrain = mapMan.getTerrainGrid();
+        terrain.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         this.initBaseShadow();
     }
 
