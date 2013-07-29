@@ -50,7 +50,8 @@ public class GameClient extends SimpleApplication
     //custom stuff
     private ArrayList WorldObjects = new ArrayList();
     private ArrayList Inventory = new ArrayList(); //TODO Inventory manager maken, invoegen in WorldObjectManager 
-    private WorldObjectManager WOM = new WorldObjectManager(WorldObjects, rootNode);
+    
+    private WorldObjectManager WOM   = new WorldObjectManager(WorldObjects, rootNode);
     private InventoryManager INV = new InventoryManager(Inventory);
     private PlayerCharacter playerCharacter = new PlayerCharacter(WOM, INV);
     public Node pickNode = new Node("pickNode");
@@ -96,14 +97,7 @@ public class GameClient extends SimpleApplication
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-
-        WOM = new WorldObjectManager(WorldObjects, rootNode);
-        INV = new InventoryManager(Inventory);
-        ObjectHelper objHelper = new ObjectHelper(bulletAppState, assetManager, WOM, rootNode);
-
-        
-        rootNode.attachChild(SkyFactory.createSky(
-                assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
         // <editor-fold defaultstate="collapsed" desc="Initialisations">
         boolean gridTest = true;
@@ -118,27 +112,26 @@ public class GameClient extends SimpleApplication
         }
         
         LightManager lightManager = new LightManager(this);
-        lightManager.initLightning(mapMan);
-        
+        lightManager.init(mapMan);      
         initPlayer();
         initCrossHairs();
         initInputManager();
+        initWorldObjectManager();
         // </editor-fold>
-
-        //TODO abstract all this away to a separate function
-        Spatial tp1 = objHelper.getTeapot("teapot 1", -10, 475, 0);
-        Spatial tp2 = objHelper.getTeapot("teapot 2", 11, 450, -10);
-        Spatial tp3 = objHelper.getTeapot("teapot 3", 5, 425, -15);
-
-        WOM.addItem(tp1);
-        WOM.addItem(tp2);
-        WOM.addItem(tp3);
-
-        rootNode.attachChild(tp1);
-        rootNode.attachChild(tp2);
-        rootNode.attachChild(tp3);
+     
+        INV = new InventoryManager(Inventory);
     }
 
+    /**
+     * Sets up the World Object Manager and spawns a sample set of objects
+     */
+    private void initWorldObjectManager() {
+        ObjectHelper objHelper = new ObjectHelper(bulletAppState, assetManager, WOM, rootNode);
+        WOM = new WorldObjectManager(WorldObjects, rootNode);
+        WOM.setObjectHelper(objHelper);
+        WOM.init();
+    }
+    
 
     /**
      * configure settings and physics for the player perspective and camera

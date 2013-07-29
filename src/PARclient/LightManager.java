@@ -22,7 +22,7 @@ public class LightManager {
     }
     
     
-    public void initLightning(MapManager mapManager) {
+    public void init(MapManager mapManager) {
         initGridShadow(mapManager);
         initLighting();
         initBloom(2f);
