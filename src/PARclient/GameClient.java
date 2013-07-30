@@ -86,7 +86,7 @@ public class GameClient extends SimpleApplication
         mapManager = new MapManager(this);
         mapManager.init(true);   
         
-        lightManager = new LightManager(this);
+        lightManager = new LightManager(this, this.getRootNode());
         lightManager.init(mapManager);
         
         initPlayer();
