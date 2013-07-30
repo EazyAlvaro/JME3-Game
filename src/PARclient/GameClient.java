@@ -152,19 +152,14 @@ public class GameClient extends SimpleApplication
         // 3. Collect intersections between Ray and Shootables in results list.
         rootNode.collideWith(ray, results);
         // 4. Print the results.
-        //System.out.println("----- Collisions? " + results.size() + "-----");
-
-        for (int i = 0; i < results.size(); i++) {
-            // For each hit, we know distance, impact point, name of geometry.
-            dist = results.getCollision(i).getDistance();
-            pt = results.getCollision(i).getContactPoint();
-        }
 
         // 5. Use the results (we mark the hit object)
         if (results.size() > 0) {
             // The closest collision point is what was truly hit:
             CollisionResult closest = results.getClosestCollision();
-            hit = closest.getGeometry().getName();
+            hit     = closest.getGeometry().getName();
+            dist    = closest.getDistance();
+            pt      = closest.getContactPoint();
 
             if (name.equals("left_click") && !keyPressed) {
                 System.out.println("You Left-Clicked: " + hit + "   [at " + pt + ", " + dist + " wu away.)");
