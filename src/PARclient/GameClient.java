@@ -89,8 +89,6 @@ public class GameClient extends SimpleApplication
         lightManager = new LightManager(this, getRootNode());
         lightManager.init(mapManager);
         
-        // init player
-        
         initPlayer();
         initCrossHairs();
         initInputManager();
