@@ -86,8 +86,10 @@ public class GameClient extends SimpleApplication
         mapManager = new MapManager(this);
         mapManager.init(true);   
         
-        lightManager = new LightManager(this, this.getRootNode());
+        lightManager = new LightManager(this, getRootNode());
         lightManager.init(mapManager);
+        
+        // init player
         
         initPlayer();
         initCrossHairs();
@@ -113,9 +115,6 @@ public class GameClient extends SimpleApplication
      */
     private void initPlayer() {
         System.out.println("InitPlayer");
-        Camera camera = getCamera();
-        camera.setLocation(new Vector3f(0, 500, 0));
-
         CapsuleCollisionShape playerShape = new CapsuleCollisionShape(2f, 2f, 2);
         player = new CharacterControl(playerShape, 0.5f);
         player.setJumpSpeed(90);
