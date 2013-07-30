@@ -19,7 +19,7 @@ public class Main extends GameClient {
 	app.setPauseOnLostFocus(true);        
         
         LightManager lightManager = new LightManager(app);
-        MapManager mapManager = new MapManager();
+        MapManager mapManager = new MapManager(app);
         app.setMapManager(mapManager);
         app.setLightManager(lightManager);
         

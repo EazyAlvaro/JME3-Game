@@ -42,8 +42,8 @@ import javax.management.JMException;
  * @author bob
  */
 public class MapManager {
-    
-        // terrain
+    private GameClient app = null;
+    // terrain
     private Material terrain_single_material; // textures/material for single maps
     private Material terrain_grid_material; // texture/material for quad/testing maps
     private Material terrain_wire;
@@ -58,7 +58,9 @@ public class MapManager {
     private float rockScale = 128;
     private boolean usePhysics = true;
         
-    
+    public MapManager(GameClient client) {
+        this.app = client;
+    }
     
     public TerrainQuad getTerrainQuad()
     {
@@ -69,6 +71,17 @@ public class MapManager {
     {
         return terrain_grid;
     }
+     
+    public void init(boolean grid) {
+        if (grid == false) { // for testing simple things without the complexity of grid-tiles around
+            this.initSimpleMapMaterials(app.getAssetManager());
+            this.initSingleMap(app.getRootNode(), app.bulletAppState);
+            this.initSingleLOD(app.getCamera());
+        } else { //for actual in-game testing
+            this.initGridMaterials(app.getAssetManager());
+            this.initGridMap(app.getRootNode(), app.bulletAppState, app.getCamera());
+        }
+    }   
        
     
     /**

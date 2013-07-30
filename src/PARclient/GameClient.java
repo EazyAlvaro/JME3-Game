@@ -37,7 +37,7 @@ public class GameClient extends SimpleApplication
     // <editor-fold defaultstate="collapsed" desc="Local Properties">
 
     //Physics
-    private BulletAppState bulletAppState;
+    public BulletAppState bulletAppState = new BulletAppState();
     private Vector3f walkDirection = new Vector3f();
     private boolean left = false, right = false, up = false, down = false;
     //Controls & GUI
@@ -86,31 +86,20 @@ public class GameClient extends SimpleApplication
      */
     @Override
     public void simpleInitApp() {
-        bulletAppState = new BulletAppState();
+        //bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
         bulletAppState.getPhysicsSpace().enableDebug(assetManager);
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
-        // <editor-fold defaultstate="collapsed" desc="Initialisations">
-        boolean gridTest = true;
-        
-        if (gridTest == false) { // for testing simple things without the complexity of grid-tiles around
-            mapMan.initSimpleMapMaterials(assetManager);
-            mapMan.initSingleMap(rootNode, bulletAppState);
-            mapMan.initSingleLOD(getCamera());
-        } else { //for actual in-game testing
-            mapMan.initGridMaterials(assetManager);
-            mapMan.initGridMap(rootNode, bulletAppState, getCamera());
-        }
-            
+        // <editor-fold defaultstate="collapsed" desc="Initialisations"> 
+        mapMan.init(true);
         lightManager.init(mapMan);      
         initPlayer();
         initCrossHairs();
         initInputManager();
         initWorldObjectManager();
-        // </editor-fold>
-     
         INV = new InventoryManager(Inventory);
+        // </editor-fold>
     }
 
     /**
@@ -346,7 +335,7 @@ public class GameClient extends SimpleApplication
     };
 
     /**
-     * @deprecated no longer used
+     * @deprecated no longer used, but has salvage value
      */
     protected void initMark() {
         Sphere sphere = new Sphere(30, 30, 0.2f);
@@ -363,6 +352,4 @@ public class GameClient extends SimpleApplication
         pickText.setLocalTranslation(300, pickText.getLineHeight(), 0);
         guiNode.attachChild(pickText); // write on the clean slate
     }
-
-
 }
