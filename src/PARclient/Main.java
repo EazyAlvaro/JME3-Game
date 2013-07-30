@@ -7,8 +7,6 @@ public class Main extends GameClient {
     public static void main(String[] args) {
         Main app = new Main();
         
-        
-        
         AppSettings settings = new AppSettings(true);
         settings.setResolution(1280,720);
         settings.setFrameRate(90);
@@ -18,10 +16,6 @@ public class Main extends GameClient {
         app.setSettings(settings);
 	app.setPauseOnLostFocus(true);        
         
-        LightManager lightManager = new LightManager(app);
-        MapManager mapManager = new MapManager(app);
-        app.setMapManager(mapManager);
-        app.setLightManager(lightManager);
         
         app.start();
     }

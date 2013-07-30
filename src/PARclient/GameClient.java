@@ -22,6 +22,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -41,25 +42,23 @@ public class GameClient extends SimpleApplication
     private Vector3f walkDirection = new Vector3f();
     private boolean left = false, right = false, up = false, down = false;
     //Controls & GUI
+
+    private ArrayList Inventory = new ArrayList(); //TODO Inventory manager maken, invoegen in WorldObjectManager 
+    private ArrayList WorldObjects = new ArrayList();
+    private WorldObjectManager WOM   = new WorldObjectManager(WorldObjects, rootNode);
+    private InventoryManager INV = new InventoryManager(Inventory);
     private CharacterControl player;
+    private PlayerCharacter playerCharacter = new PlayerCharacter(WOM, INV);
+    
     private Geometry mark;
     public BitmapText pickText;// = new BitmapText(guiFont, false);
     public BitmapText inventorytext;
-    private CameraNode camNode;
     //custom stuff
-    private ArrayList WorldObjects = new ArrayList();
-    private ArrayList Inventory = new ArrayList(); //TODO Inventory manager maken, invoegen in WorldObjectManager 
-    
-    private WorldObjectManager WOM   = new WorldObjectManager(WorldObjects, rootNode);
-    private InventoryManager INV = new InventoryManager(Inventory);
-    private PlayerCharacter playerCharacter = new PlayerCharacter(WOM, INV);
-    public Node pickNode = new Node("pickNode");
-    private boolean showWireframe = false;   
-    private MapManager mapMan;
-    private LightManager lightManager;
-    private GameClient app = null;
 
-    
+    private boolean showWireframe = false;   
+    private LightManager lightManager;
+
+    private MapManager mapManager;
     // </editor-fold>
     public static void main(String[] args) {
         
@@ -68,19 +67,10 @@ public class GameClient extends SimpleApplication
         app.setShowSettings(true);
     }
     
-
-    public void setMapManager(MapManager mapManager)
-    {
-        mapMan = mapManager;
-    }
-    
     /**
      * @fixme doesn't seem to carry to simpleInitApp
      */
-    public void setLightManager(LightManager lightManag) {
-        lightManager = lightManag;
-    }
-    
+
     /**
      * Initiates the app. is called by app.start()
      */
@@ -92,8 +82,13 @@ public class GameClient extends SimpleApplication
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 
         // <editor-fold defaultstate="collapsed" desc="Initialisations"> 
-        mapMan.init(true);
-        lightManager.init(mapMan);      
+        
+        mapManager = new MapManager(this);
+        mapManager.init(true);   
+        
+        lightManager = new LightManager(this);
+        lightManager.init(mapManager);
+        
         initPlayer();
         initCrossHairs();
         initInputManager();
@@ -118,25 +113,25 @@ public class GameClient extends SimpleApplication
      */
     private void initPlayer() {
         System.out.println("InitPlayer");
-        this.getCamera().setLocation(new Vector3f(0, 500, 0));
+        Camera camera = getCamera();
+        camera.setLocation(new Vector3f(0, 500, 0));
 
         CapsuleCollisionShape playerShape = new CapsuleCollisionShape(2f, 2f, 2);
         player = new CharacterControl(playerShape, 0.5f);
-
-
         player.setJumpSpeed(90);
         player.setFallSpeed(45);
         player.setGravity(30);
         player.setPhysicsLocation(new Vector3f(0, 500, 0));
         bulletAppState.getPhysicsSpace().add(player);
 
-
+/*
         flyCam = new FlyByCamera(cam);
         flyCam.setMoveSpeed(120);
         flyCam.registerWithInput(inputManager);
         flyCam.setEnabled(true);
         //cam.setLocation(player.getPhysicsLocation());
-
+*/
+        
         //camNode = new CameraNode("CamNode", cam);
         //camNode.setControlDir(ControlDirection.SpatialToCamera);
         //camNode.setLocalTranslation(new Vector3f(0, 500, 0));
@@ -199,6 +194,36 @@ public class GameClient extends SimpleApplication
      * Maps keytriggers to inputListeners to move the player and take other input (mouse, mainly)
      */
     public void initInputManager() {
+        
+            //TODO make separate file/class
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void onAction(String binding, boolean value, float tpf) {
+
+                if (binding.equals("Lefts")) {
+                    left = value;
+                } else if (binding.equals("Rights")) {
+                    right = value;
+                } else if (binding.equals("Ups")) {
+                    up = value;
+                } else if (binding.equals("Downs")) {
+                    down = value;
+                } else if (binding.equals("Jumps")) {
+                    player.jump();
+                } else if (binding.equals("left_click")) {
+                    handleMouseClick(binding, value);
+                } else if (binding.equals("right_click")) {
+                    handleMouseClick(binding, value);
+                } else if (binding.equals("wireframe") && !value) {
+                    showWireframe = !showWireframe;
+                    mapManager.showFrames(showWireframe, player);
+                }
+                simpleUpdate(tpf);
+            }
+        };
+        
+        
+        
         // Mappings
         inputManager.addMapping("Lefts", new KeyTrigger(KeyInput.KEY_A));
         inputManager.addMapping("Rights", new KeyTrigger(KeyInput.KEY_D));
@@ -226,11 +251,11 @@ public class GameClient extends SimpleApplication
     }
    
     /**
-     * Overrides the abstract class
      * @param binding The KeyBinding that was(or was not) triggered
      * @param value whether or not said key was pressed
      * @param tpf dont know/care
      */
+    @Override
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Lefts")) {
             left = value;
@@ -298,8 +323,6 @@ public class GameClient extends SimpleApplication
 
         //guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         inventorytext = new BitmapText(assetManager.loadFont("Interface/Fonts/Default.fnt"), false);
-
-
         Iterator<Item> itr = playerCharacter.getInventoryAsArrayList().iterator();
         while (itr.hasNext()) {
             Item i = itr.next();
@@ -308,31 +331,7 @@ public class GameClient extends SimpleApplication
         }
     }
     
-    //TODO make separate file/class
-    private ActionListener actionListener = new ActionListener() {
-        public void onAction(String binding, boolean value, float tpf) {
 
-            if (binding.equals("Lefts")) {
-                left = value;
-            } else if (binding.equals("Rights")) {
-                right = value;
-            } else if (binding.equals("Ups")) {
-                up = value;
-            } else if (binding.equals("Downs")) {
-                down = value;
-            } else if (binding.equals("Jumps")) {
-                player.jump();
-            } else if (binding.equals("left_click")) {
-                handleMouseClick(binding, value);
-            } else if (binding.equals("right_click")) {
-                handleMouseClick(binding, value);
-            } else if (binding.equals("wireframe") && !value) {
-                showWireframe = !showWireframe;
-                mapMan.showFrames(showWireframe, player);
-            }
-            simpleUpdate(tpf);
-        }
-    };
 
     /**
      * @deprecated no longer used, but has salvage value
