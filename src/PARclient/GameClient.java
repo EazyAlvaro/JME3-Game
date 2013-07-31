@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class GameClient extends SimpleApplication
-        implements ActionListener {
+public class GameClient extends SimpleApplication implements ActionListener
+{
 
     // <editor-fold defaultstate="collapsed" desc="Local Properties">
 
@@ -57,8 +57,9 @@ public class GameClient extends SimpleApplication
 
     private boolean showWireframe = false;   
     private LightManager lightManager;
-
     private MapManager mapManager;
+    private MainMenu mainMenu;
+    
     // </editor-fold>
     public static void main(String[] args) {
         
@@ -88,6 +89,9 @@ public class GameClient extends SimpleApplication
         
         lightManager = new LightManager(this, getRootNode());
         lightManager.init(mapManager);
+        
+        mainMenu = new MainMenu();
+        mainMenu.init(assetManager, getRootNode(), getViewPort(), inputManager);
         
         initPlayer();
         initCrossHairs();
@@ -348,4 +352,5 @@ public class GameClient extends SimpleApplication
         pickText.setLocalTranslation(300, pickText.getLineHeight(), 0);
         guiNode.attachChild(pickText); // write on the clean slate
     }
+    
 }
