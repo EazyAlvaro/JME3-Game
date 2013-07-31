@@ -13,7 +13,6 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapText;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -22,10 +21,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
-import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.SkyFactory;
 import java.util.ArrayList;
@@ -158,19 +154,14 @@ public class GameClient extends SimpleApplication implements ActionListener
         // 3. Collect intersections between Ray and Shootables in results list.
         rootNode.collideWith(ray, results);
         // 4. Print the results.
-        //System.out.println("----- Collisions? " + results.size() + "-----");
-
-        for (int i = 0; i < results.size(); i++) {
-            // For each hit, we know distance, impact point, name of geometry.
-            dist = results.getCollision(i).getDistance();
-            pt = results.getCollision(i).getContactPoint();
-        }
 
         // 5. Use the results (we mark the hit object)
         if (results.size() > 0) {
             // The closest collision point is what was truly hit:
             CollisionResult closest = results.getClosestCollision();
-            hit = closest.getGeometry().getName();
+            hit     = closest.getGeometry().getName();
+            dist    = closest.getDistance();
+            pt      = closest.getContactPoint();
 
             if (name.equals("left_click") && !keyPressed) {
                 System.out.println("You Left-Clicked: " + hit + "   [at " + pt + ", " + dist + " wu away.)");
