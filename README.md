@@ -1,11 +1,22 @@
-JME3-based 3d game project for hobbytainment
+#JME3-based 3d game project for hobbytainment
 =======
 
-immediate TODO:
-* visual UI
-* abstract the [expletive deleted] out of GameClient
+Alvaro's  TODO's
+===
 * procedural texture/splatmapping for terrain
+* Write out heightmaps and their splatmaps
+* night/day cycle lightings
+
+Bob's TODO's
+===
+* visual UIs
+* loose coupling of manager functions/classes
+
+
+
+Unassigned TODO:
+===
+* abstract/extract the [expletive deleted] out of GameClient
 * Variable camera angles
 * player body model (use stock golem for testing)
-* night/day cycle lighting
 * implement trees/grass (low priority, it's still not in RC branch )
